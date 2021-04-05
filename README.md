@@ -1,3 +1,3 @@
-# flutter_app
+# ChessApp
 
 This is my first project, also with git. Pls dont laugh
