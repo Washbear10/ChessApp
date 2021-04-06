@@ -4,9 +4,10 @@ import 'package:flutter_app/time_button.dart';
 import 'package:provider/provider.dart';
 import 'icon_button_widgets.dart';
 import 'package:flutter/services.dart';
+import 'package:wakelock/wakelock.dart';
 void main() {
-  print(~1);
-  print(~2);
+  WidgetsFlutterBinding.ensureInitialized();
+  Wakelock.enable();
   runApp(MyApp());
 }
 

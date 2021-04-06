@@ -34,12 +34,17 @@ class _MyPauseButtonState extends State<MyPauseButton> {
             playing ? Icons.pause : Icons.play_arrow
         ),
         color: Colors.amber,
+        disabledColor: Colors.amber.withOpacity(0.3),
         iconSize: 50,
-        onPressed: (){
-          // myModelInfo.setPausedButtonNumber(0);
-          if (myModelInfo.hasStarted)
-            playing ? myModelInfo.setPlayingNumber(0) : myModelInfo.setPlayingNumber(mostRecentPlayer);
-        }
+        onPressed: myModelInfo.hasStarted ? //  //if game has started, let button behave how implemented, else disable it
+
+            (){
+              // myModelInfo.setPausedButtonNumber(0);
+              if (myModelInfo.hasStarted)
+                playing ? myModelInfo.setPlayingNumber(0) : myModelInfo.setPlayingNumber(mostRecentPlayer);
+            }
+            :   // else if game not yet started return null as callback --> flutter regards button as disabled
+            null
     );
   }
 }
@@ -66,50 +71,54 @@ class _MyRestartButtonState extends State<MyRestartButton> {
     else if (myModelInfo.button == 2) mostRecentPlayer = 2;
     return IconButton(
         icon: Icon(
-            Icons.restore
+            Icons.restore,
         ),
+        disabledColor: Colors.amber.withOpacity(0.3),
         iconSize: 50,
         color: Colors.amber,
-        onPressed: (){
-          bool wasPaused = myModelInfo.button == 0; // remember if it was already paused before button clicked
-          myModelInfo.setPlayingNumber(0); //pause the game
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  backgroundColor: Color(0XFFFF4B4B4B),
-                  titleTextStyle: AlertTitleStyle,
-                  title: Text("Restart Time?"),
-                  actions: [
-                    TextButton( //Button to restart the time
-                        child: Text("Restart", style: TextStyle(fontSize: 30),),
-                        style: TextButton.styleFrom(
-                          primary: Colors.amber,
-                          enableFeedback: true,
-                        ),
-                        onPressed: () {
-                          mostRecentPlayer = 0;
-                          myModelInfo.restart();
-                          Navigator.pop(context);
-                        }
-                    ),
-                    TextButton( //Button to keep playing, not restart time
-                        child: Text("Discard", style: TextStyle(fontSize: 30)),
-                        style: TextButton.styleFrom(
-                          primary: Colors.amber,
-                          enableFeedback: true,
-                        ),
-                        onPressed: () {
-                          if (!wasPaused) myModelInfo.setPlayingNumber(mostRecentPlayer); // continue with last player if the game was not paused.
-                                                                                          //otherwise just leave it paused (=> myModelInfo.button = 0)
-                          Navigator.pop(context);
-                        }
-                    )
-                  ],
+        onPressed: myModelInfo.hasStarted ? // same ternary logic as with StartButton, look it up
+            (){
+                bool wasPaused = myModelInfo.button == 0; // remember if it was already paused before button clicked
+                myModelInfo.setPlayingNumber(0); //pause the game
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: Color(0XFFFF4B4B4B),
+                        titleTextStyle: AlertTitleStyle,
+                        title: Text("Restart Time?"),
+                        actions: [
+                          TextButton( //Button to restart the time
+                              child: Text("Restart", style: TextStyle(fontSize: 30),),
+                              style: TextButton.styleFrom(
+                                primary: Colors.amber,
+                                enableFeedback: true,
+                              ),
+                              onPressed: () {
+                                mostRecentPlayer = 0;  //might not be needed, check later
+                                myModelInfo.restart();
+                                Navigator.pop(context);
+                              }
+                          ),
+                          TextButton( //Button to keep playing, not restart time
+                              child: Text("Discard", style: TextStyle(fontSize: 30)),
+                              style: TextButton.styleFrom(
+                                primary: Colors.amber,
+                                enableFeedback: true,
+                              ),
+                              onPressed: () {
+                                if (!wasPaused) myModelInfo.setPlayingNumber(mostRecentPlayer); // continue with last player if the game was not paused.
+                                                                                                //otherwise just leave it paused (=> myModelInfo.button = 0)
+                                Navigator.pop(context);
+                              }
+                          )
+                        ],
+                      );
+                    }
                 );
               }
-          );
-        }
+              :
+              null
     );
   }
 }

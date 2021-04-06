@@ -10,38 +10,10 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
 
   List<Game> savedGames = [
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
-    Game(Duration(minutes: 29), 41, "Game 1"),
-    Game(Duration(seconds: 29), 15, "Game 2"),
-    Game(Duration(seconds: 50), 20, "Game 3"),
-    Game(Duration(minutes: 2), 31, "Game 4"),
+    Game(Duration(minutes: 29), 41, "Game 1 - 29 minutes and 41 moves"),
+    Game(null, 15, "Game 2 - only 15 moves"),
+    Game(Duration(minutes: 1), null, "Game 3 - 1 minutes and moves set to null"),
+
   ];
 
   @override
