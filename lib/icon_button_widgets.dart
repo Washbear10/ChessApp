@@ -3,7 +3,6 @@ import 'package:flutter_app/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_app/model.dart';
 import 'package:flutter/material.dart';
-
 import 'game_setting.dart';
 
 

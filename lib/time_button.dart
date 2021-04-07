@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'model.dart';
 import 'sounds.dart';
 
+
 class TimeButton extends StatefulWidget {
   @override
   _TimeButtonState createState() => _TimeButtonState();
@@ -39,7 +40,8 @@ class _TimeButtonState extends State<TimeButton> {
   void handleMoves(){
     setState(() {
       remainingMoves--;
-      currentColor = calculateColor(widget.game.maxMoves, remainingMoves);
+      // if game has no time limit, only move limit, then set color according to moves. Else the timer will handle it.
+      if (widget.game.duration == null) currentColor = calculateColor(widget.game.maxMoves, remainingMoves);
     });
   }
 
@@ -52,6 +54,13 @@ class _TimeButtonState extends State<TimeButton> {
     });
   }
 
+  // Might be needed later, but for now just use black and white. Seems to be overkill otherwise
+  Color getComplementaryColor(){
+    int complementaryRed = 255 - currentColor.red;
+    int complementaryGreen = 255 - currentColor.green;
+    int complementaryBlue = 255 - currentColor.blue;
+    return Color.fromRGBO(complementaryRed, complementaryGreen, complementaryBlue, 1);
+  }
 
 
   @override
@@ -109,9 +118,11 @@ class _TimeButtonState extends State<TimeButton> {
           overlayColor: MaterialStateProperty.all(Colors.transparent),
           enableFeedback: true,
         ),
-        child: Text(
-          remainingDuration != null ? remainingTime : remainingMoves.toString(),
-          style: (timeStyle),
+        child: TimeAndMoves(
+          remainingDuration: remainingDuration,
+          remainingTime: remainingTime,
+          remainingMoves: remainingMoves,
+          iconColor: run ? Colors.black : Colors.white,
         ),
         onPressed: () {
           if(run) {
@@ -151,6 +162,71 @@ class _TimeButtonState extends State<TimeButton> {
 
 
 
+//Widget for Displaying Icons and Text for Time and/or Moves Left
+class TimeAndMoves extends StatelessWidget {
+  const TimeAndMoves({
+    Key key,
+    @required this.remainingMoves, this.iconColor, this.remainingTime, this.remainingDuration,
+  }) : super(key: key);
+
+  final Duration remainingDuration;
+  final String remainingTime;
+  final int remainingMoves;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    if (remainingDuration != null && remainingMoves != null) {
+      return RichText(
+          text: TextSpan(
+              style: timeStyle,
+              children: [
+                WidgetSpan(child: Icon(Icons.timer, color: iconColor,),
+                    alignment: PlaceholderAlignment.middle),
+                TextSpan(text: " $remainingTime\n"),
+                WidgetSpan(child: Icon(Icons.alt_route, color: iconColor,),
+                    alignment: PlaceholderAlignment.middle),
+                TextSpan(text: " ${remainingMoves.toString()}"),
+              ]
+          )
+      );
+    }
+    else if (remainingDuration != null && remainingMoves == null){
+      return RichText(
+          text: TextSpan(
+              style: timeStyle,
+              children: [
+                WidgetSpan(
+                    child: Icon(Icons.timer, color: iconColor,),
+                    alignment: PlaceholderAlignment.middle
+                ),
+                TextSpan(text: " $remainingTime")
+              ]
+          )
+      );
+    }
+    else if (remainingDuration == null && remainingMoves != null){
+      return RichText(
+          text: TextSpan(
+              style: timeStyle,
+              children: [
+                WidgetSpan(child: Icon(Icons.alt_route, color: iconColor,),
+                    alignment: PlaceholderAlignment.middle),
+                TextSpan(text: " ${remainingMoves.toString()}"),
+              ]
+          )
+      );
+    }
+  }
+
+}
+
+
+
+
+
+
+
 
 
 
@@ -171,7 +247,6 @@ Color calculateColor (int max, int current) {
         Color(0xff1fff00),
         Color(0xffd0ff00),
         Color(0xffffdd00),
-        Color(0xffff5100),
         Color(0xffec0000)
       ],
       rangeStart: 1.0,
@@ -179,4 +254,3 @@ Color calculateColor (int max, int current) {
   );
   return rb[remainingFraction];
 }
-

@@ -1,7 +1,5 @@
 import 'package:quiver/core.dart';
 
-
-
 class Game {
 
   Duration duration;
