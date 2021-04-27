@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/model.dart';
 import 'package:flutter_app/time_button.dart';
 import 'package:provider/provider.dart';
+import 'configuration_model.dart';
 import 'icon_button_widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:wakelock/wakelock.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Wakelock.enable();
   runApp(MyApp());
 }
 
@@ -21,9 +21,12 @@ class MyApp extends StatelessWidget {
         DeviceOrientation.portraitUp
       ]
     );
-    return MaterialApp(
-        title: 'Flutter Demo',
-        home: HomeScreen()
+    return ChangeNotifierProvider(
+      create: (context) => ConfigurationModel(),
+      child: MaterialApp(
+          title: 'Flutter Demo',
+          home: HomeScreen()
+      ),
     );
   }
 }
@@ -45,16 +48,25 @@ class HomeScreen extends StatelessWidget {
               child: ChangeNotifierProvider(
                 create: (context) => MyModel(),
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       RotatedBox(child: TimeButton(buttonNumber: 1,), quarterTurns: 2,),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      Expanded( // This is the middle Space with the iconButtons
+                        child: Stack(
                           children: [
-                            MyPauseButton(),
-                            MyRestartButton(),
-                            MySettingsButton()
+                            Container(
+                              child: MyPauseButton(),
+                              alignment: Alignment.center,
+                            ),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  MyRestartButton(),
+                                  MySettingsButton()
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),

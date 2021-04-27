@@ -49,7 +49,7 @@ class _TimeButtonState extends State<TimeButton> {
     setState(() {
       remainingDuration = widget.game.duration;
       remainingTime = widget.game.duration != null ? DurationToString(remainingDuration) : null;   //if game has no duration, remainingTime is not needed
-      currentColor = Color(0xff1fff00).withOpacity(0.3); //at the beginning always green
+      currentColor = Color(0xff1cd400).withOpacity(0.3); //at the beginning always green
       remainingMoves = widget.game.maxMoves;  // might be null, might not be. doesnt matter for now
     });
   }
@@ -71,7 +71,7 @@ class _TimeButtonState extends State<TimeButton> {
     remainingDuration = widget.game.duration;
     remainingTime = DurationToString(remainingDuration);
     remainingMoves = widget.game.maxMoves;
-    currentColor = Color(0xff1fff00).withOpacity(0.3); //at the beginning always green
+    currentColor = Color(0xff1cd400).withOpacity(0.3); //at the beginning always green
 
     //timer gets initialized.
     colorTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
@@ -122,7 +122,7 @@ class _TimeButtonState extends State<TimeButton> {
           remainingDuration: remainingDuration,
           remainingTime: remainingTime,
           remainingMoves: remainingMoves,
-          iconColor: run ? Colors.black : Colors.white,
+          textColor: run ? Colors.black : Colors.white,
         ),
         onPressed: () {
           if(run) {
@@ -166,25 +166,25 @@ class _TimeButtonState extends State<TimeButton> {
 class TimeAndMoves extends StatelessWidget {
   const TimeAndMoves({
     Key key,
-    @required this.remainingMoves, this.iconColor, this.remainingTime, this.remainingDuration,
+    @required this.remainingMoves, this.textColor, this.remainingTime, this.remainingDuration,
   }) : super(key: key);
 
   final Duration remainingDuration;
   final String remainingTime;
   final int remainingMoves;
-  final Color iconColor;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
     if (remainingDuration != null && remainingMoves != null) {
       return RichText(
           text: TextSpan(
-              style: timeStyle,
+              style: timeStyle.copyWith(color: textColor),
               children: [
-                WidgetSpan(child: Icon(Icons.timer, color: iconColor,),
+                WidgetSpan(child: Icon(Icons.timer, color: textColor, size: 30,),
                     alignment: PlaceholderAlignment.middle),
                 TextSpan(text: " $remainingTime\n"),
-                WidgetSpan(child: Icon(Icons.alt_route, color: iconColor,),
+                WidgetSpan(child: Icon(Icons.alt_route, color: textColor, size: 30),
                     alignment: PlaceholderAlignment.middle),
                 TextSpan(text: " ${remainingMoves.toString()}"),
               ]
@@ -197,7 +197,7 @@ class TimeAndMoves extends StatelessWidget {
               style: timeStyle,
               children: [
                 WidgetSpan(
-                    child: Icon(Icons.timer, color: iconColor,),
+                    child: Icon(Icons.timer, color: textColor, size: 30),
                     alignment: PlaceholderAlignment.middle
                 ),
                 TextSpan(text: " $remainingTime")
@@ -210,7 +210,7 @@ class TimeAndMoves extends StatelessWidget {
           text: TextSpan(
               style: timeStyle,
               children: [
-                WidgetSpan(child: Icon(Icons.alt_route, color: iconColor,),
+                WidgetSpan(child: Icon(Icons.alt_route, color: textColor, size: 30),
                     alignment: PlaceholderAlignment.middle),
                 TextSpan(text: " ${remainingMoves.toString()}"),
               ]
@@ -244,10 +244,10 @@ Color calculateColor (int max, int current) {
   double remainingFraction = current / max;
   var rb = Rainbow(
       spectrum: [
-        Color(0xff1fff00),
-        Color(0xffd0ff00),
-        Color(0xffffdd00),
-        Color(0xffec0000)
+        Color(0xff1cd400),
+        Color(0xffd9e000),
+        Color(0xffd29700),
+        Color(0xffe20000)
       ],
       rangeStart: 1.0,
       rangeEnd: 0.0

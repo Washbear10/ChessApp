@@ -15,3 +15,17 @@ const AlertTitleStyle = TextStyle(
 );
 
 
+const cardTitleStyle = TextStyle(
+  fontSize: 20,
+  color: Colors.black,
+);
+
+const cardValuesStyle = TextStyle(
+  fontSize: 25,
+  color: Colors.black,
+);
+
+const gameInputStyle = TextStyle(
+  fontSize: 24,
+  color: Colors.black,
+);

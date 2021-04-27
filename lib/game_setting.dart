@@ -15,4 +15,10 @@ class Game {
   bool operator ==(o) => o is Game && name == o.name && duration == o.duration && maxMoves == o.maxMoves;
   int get hashCode => hash3(name.hashCode, maxMoves.hashCode, duration.hashCode);
 
+
+  @override
+  String toString(){
+    return ("Duration: ${duration.toString()}; \nmaxMoves: $maxMoves; \nname: $name");
+  }
+
 }

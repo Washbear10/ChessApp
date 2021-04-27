@@ -90,6 +90,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_picker:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: cf57b14014caff3f5aae24341c4f0f4f56601790
+      url: "git://github.com/yangyxd/flutter_picker.git"
+    source: git
+    version: "2.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter

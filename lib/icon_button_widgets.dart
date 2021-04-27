@@ -3,6 +3,7 @@ import 'package:flutter_app/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_app/model.dart';
 import 'package:flutter/material.dart';
+import 'package:wakelock/wakelock.dart';
 import 'game_setting.dart';
 
 
@@ -34,7 +35,7 @@ class _MyPauseButtonState extends State<MyPauseButton> {
         ),
         color: Colors.amber,
         disabledColor: Colors.amber.withOpacity(0.3),
-        iconSize: 50,
+        iconSize: 55,
         onPressed: myModelInfo.hasStarted ? //  //if game has started, let button behave how implemented, else disable it
 
             (){
@@ -73,7 +74,7 @@ class _MyRestartButtonState extends State<MyRestartButton> {
             Icons.restore,
         ),
         disabledColor: Colors.amber.withOpacity(0.3),
-        iconSize: 50,
+        iconSize: 35,
         color: Colors.amber,
         onPressed: myModelInfo.hasStarted ? // same ternary logic as with StartButton, look it up
             (){
@@ -144,11 +145,14 @@ class _MySettingsButtonState extends State<MySettingsButton> {
         icon: Icon(
             Icons.settings
         ),
-        iconSize: 50,
+        iconSize: 35,
         color: Colors.amber,
         onPressed: () async {
           myModelInfo.setPlayingNumber(0);
+          //TODO enable again
+          // Wakelock.disable(); // enable again when popping back to play screen
           Game returnedGame = await Navigator.push(context, MaterialPageRoute(builder: (context) { return SettingsScreen(); } ));
+          // Wakelock.enable();
           if (returnedGame != null){
             print("nich null, game: ${returnedGame.name}");
             myModelInfo.restart();
