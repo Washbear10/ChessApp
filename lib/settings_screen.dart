@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/constants.dart';
+import 'package:flutter_app/deletion_model.dart';
 import 'package:provider/provider.dart';
 import 'game_setting.dart';
 import 'package:flutter_app/time_button.dart' show DurationToString;
 import 'configuration_model.dart';
+import 'package:toast/toast.dart';
+
+
 
 class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
-
 class _SettingsScreenState extends State<SettingsScreen> {
-
-
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+        create: (context) => DeletionModel(),
+        child: MySafeAreaWidget()
+    );
+  }
+}
+
+
+
+class MySafeAreaWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var deletionModelInfo = context.watch<DeletionModel>();
+    var configurationModelInfo = context.watch<ConfigurationModel>();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black87,
@@ -39,11 +54,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
 
-
-
 class GameCardBuilder extends StatefulWidget {
   GameCardBuilder({Key key,}) : super(key: key);
-
   @override
   _GameCardBuilderState createState() => _GameCardBuilderState();
 }
@@ -64,26 +76,151 @@ class _GameCardBuilderState extends State<GameCardBuilder> {
           }  //when it's added, proceed to build all the game ListTiles from the Model
           index--;   //must be declared here, and not in the (more obvious) conditional block above, because the builder function seems to be immune to
           //changes to index. So decrement index before every Card gets build, so you start with 0, and not 1
-          return Card(
-            color: Color(0xFF6D6D6D),
-            child: ListTile(
-              subtitle: Row(
-                  children: [
-                    Expanded(child: Text(configurationModelInfo.gameList[index].name, softWrap: true, style: cardTitleStyle,), flex: 3,),
-                    Expanded(child: getRichTextColumn(configurationModelInfo.gameList[index]), flex: 3),
-                  ]
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 10),
-              // trailing: IconButton(icon: Icon(Icons.edit),),
-              onTap: () {
-                Navigator.pop(
-                    context,
-                    configurationModelInfo.gameList[index]
-                );
-              },
-            ),
-          );
+          Game containedGame = configurationModelInfo.gameList[index];
+          return GameCard(configurationModelInfo, index, containedGame);
         }
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+class AddGameCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var configurationModelInfo = context.watch<ConfigurationModel>();
+    var deletionModelInfo = context.watch<DeletionModel>();
+    if (!deletionModelInfo.deleteMode) // We are not deleting, just showing Games, then show an "Add new game" Card
+      return Card(
+        color: Colors.amber.withOpacity(0.8),
+        child: ListTile(
+          subtitle: Icon(Icons.add_box),
+          title: Center(child: Text("Add Game"),),
+          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+          // trailing: IconButton(icon: Icon(Icons.edit),),
+          onTap: () {
+            showDialog(
+                context: context,
+                builder:  (context) {
+                  return SimpleDialog(
+                    title: Text("New Game"),
+                    children: [
+                      AddGameForm()
+                    ],
+                  );
+                }
+            );
+          },
+        ),
+      );
+    else          // If in deletion mode, then act as Delete Button for selected Games
+      return Card(
+        color: Color.fromRGBO(215, 209, 209, 1.0),
+        child: ListTile(
+          subtitle: Icon(Icons.delete_forever),
+          title: Center(child: Text("Delete selected games", style: deleteCardStyle,),),
+          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+          // trailing: IconButton(icon: Icon(Icons.edit),),
+          onTap: () {
+            configurationModelInfo.removeGamesWithDeletionList(deletionModelInfo.deletionList);
+            deletionModelInfo.deActivateDeleteMode();
+            Toast.show(
+                "Games deleted.",
+                context,
+                duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,
+                backgroundColor: Colors.amber.withOpacity(0.6),
+                textColor: Colors.black,
+                border: Border.all(
+                    color: Colors.amber
+                )
+            );
+          },
+        ),
+      );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+class GameCard extends StatefulWidget {
+  GameCard(this.configurationModelInfo, this.index, this.containedGame);
+  ConfigurationModel configurationModelInfo;  //
+  int index; //from builder Function in GameCardBuilder, needed to access specific Game in List from Provider
+  Game containedGame;
+  @override
+  _GameCardState createState() => _GameCardState();
+}
+
+class _GameCardState extends State<GameCard> {
+  @override
+  Widget build(BuildContext context) {
+    var deletionModelInfo = context.watch<DeletionModel>();
+    return Card(
+      color: Color(0xFF504E4E),
+      shape: RoundedRectangleBorder(
+          side: BorderSide(
+              color: Colors.white.withOpacity(0.2)
+          )
+      ),
+      child: AnimatedContainer(
+        // color: deletionModelInfo.deletionList.contains(widget.containedGame)  ? Color(0x9ED71818) : Color(0x504E4E),
+        duration: Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+            color: deletionModelInfo.deletionList.contains(widget.containedGame)  ? Color(
+                0x52B61818) : Color(0x504E4E),
+            border: Border.all(
+              color: deletionModelInfo.deletionList.contains(widget.containedGame)  ? Color(
+                  0xFFBD0000) : Color(0x504E4E),
+            )
+        ),
+        child: ListTile(
+          subtitle: Row(
+              children: [
+                Expanded(child: Text(widget.configurationModelInfo.gameList[widget.index].name, softWrap: true, style: cardTitleStyle,), flex: 3,),
+                Expanded(child: getRichTextColumn(widget.configurationModelInfo.gameList[widget.index]), flex: 3),
+              ]
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+          // trailing: IconButton(icon: Icon(Icons.edit),),
+          onTap: () {
+            if (deletionModelInfo.deleteMode == false) { //if I am not in deletionmode, I just want to play the selected Game.
+              Navigator.pop(
+                  context,
+                  widget.configurationModelInfo.gameList[widget.index]
+              );
+            } else{ // I long tapped a Game, so I entered deletion Mode
+              if (deletionModelInfo.deletionList.contains(widget.containedGame)){
+                deletionModelInfo.removeGameFromDeletionList(widget.containedGame);
+                if (deletionModelInfo.deletionList.isEmpty) deletionModelInfo.deActivateDeleteMode(); // Maybe It was the last red Card, then i should leave deletion mode
+              } else {
+                deletionModelInfo.addGameToDeletionList(widget.containedGame);
+              }
+            }
+          },
+          onLongPress: () { // handle Deletion Mode with LongTapping
+            if (deletionModelInfo.deleteMode == false) { //first Game to be selected for Deletion
+              deletionModelInfo.activateDeleteMode();
+              deletionModelInfo.addGameToDeletionList(widget.containedGame);
+            }
+            // } else if (deletionModelInfo.deleteMode == true && deletionModelInfo.deletionList.isEmpty){ // I am in Deletion mode, and
+            //   deletionModelInfo.deActivateDeleteMode();
+            // }
+          },
+        ),
+      ),
     );
   }
 
@@ -124,37 +261,6 @@ class _GameCardBuilderState extends State<GameCardBuilder> {
 
 
 
-
-class AddGameCard extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    var configurationModelInfo = context.watch<ConfigurationModel>();
-    return Card(
-      color: Colors.amber.withOpacity(0.8),
-      child: ListTile(
-        subtitle: Icon(Icons.add_box),
-        title: Center(child: Text("Add Game"),),
-        contentPadding: EdgeInsets.symmetric(horizontal: 10),
-        // trailing: IconButton(icon: Icon(Icons.edit),),
-        onTap: () {
-          showDialog(
-              context: context,
-              builder:  (context) {
-                return SimpleDialog(
-                  title: Text("New Game"),
-                  children: [
-                    AddGameForm()
-                  ],
-
-                );
-              }
-          );
-        },
-      ),
-    );
-  }
-}
 
 
 
@@ -222,9 +328,12 @@ class _AddGameFormState extends State<AddGameForm> {
                   child: TextFormField(
                     controller: tcTitle,
                     decoration: InputDecoration(
-                      hintText: "Title"
+                        hintText: "Title"
                     ),
                     style: gameInputStyle,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[^#;]')),
+                    ],
                   ),
                 )
               ],
@@ -340,22 +449,44 @@ class _AddGameFormState extends State<AddGameForm> {
               ],
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (customValidate()){
-                  String name = tcTitle.text;
+                  String name = tcTitle.text ?? "";
                   int hours = int.tryParse(tcHours.text);
                   int minutes = int.tryParse(tcMinutes.text);
                   int seconds = int.tryParse(tcSeconds.text);
                   int maxMoves = int.tryParse(tcMoves.text);
                   Duration duration;
-                  if (hours+minutes+seconds != 0) {
+                  if (hours != null && minutes != null && seconds != null) { //Time was supplied
                     duration = Duration(hours: hours, minutes: minutes, seconds: seconds);
+                    if (duration.inSeconds == 0 && maxMoves == null) { // If input was 0:0:0 in Time, and also no maxMoves -> show error
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                                title: Text("Invalid Settings"),
+                                content: Text("Time must be greater than 0:0:0 if supplied")
+                            );
+                          }
+                      );
+                      return;
+                    } else if (duration.inSeconds == 0 && maxMoves != null) duration = null;
+                    // (maxMoves was supplied, and time was supplied as 0:0:0, then User probably meant to only configure moves)
                   }
                   if (tcMoves == 0) maxMoves = null;
                   Game newGame = Game(duration, maxMoves, name);
-                  print(newGame);
-                  myModelInfo.addGameToList(newGame);
+                  await myModelInfo.addGameToList(newGame);
                   Navigator.pop(context);
+                  Toast.show(
+                      "Game added.",
+                      context,
+                      duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM,
+                      backgroundColor: Colors.amber.withOpacity(0.6),
+                      textColor: Colors.black,
+                      border: Border.all(
+                          color: Colors.amber
+                      )
+                  );
                 }
               },
               child: Text('Submit'),
@@ -378,7 +509,6 @@ class _AddGameFormState extends State<AddGameForm> {
 
     // All Times supplied, but not Moves
     if (_hoursFormFieldKey.currentState.isValid && _minutesFormFieldKey.currentState.isValid && _secondsFormFieldKey.currentState.isValid && !_movesFormFieldKey.currentState.isValid){
-      print("VALID GAME SETTING, TIME SUPPLIED");
       _hoursFormFieldKey.currentState.validate();
       _minutesFormFieldKey.currentState.validate();
       _secondsFormFieldKey.currentState.validate();
@@ -390,7 +520,6 @@ class _AddGameFormState extends State<AddGameForm> {
     }
     // moves  supplied, but not all times
     else if (!(_hoursFormFieldKey.currentState.isValid && _minutesFormFieldKey.currentState.isValid && _secondsFormFieldKey.currentState.isValid) && _movesFormFieldKey.currentState.isValid){
-      print("VALID GAME SETTING, MOVES SUPPLIED");
       _movesFormFieldKey.currentState.validate();
 
       // to prevent the error message from showing, because it's accepted to only supply moves

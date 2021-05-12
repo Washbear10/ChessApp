@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'configuration_model.dart';
 import 'icon_button_widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:flutter_app/configuration_model.dart';
+import 'globals.dart' as global;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  global.setGameListFromFile();
   runApp(MyApp());
 }
 

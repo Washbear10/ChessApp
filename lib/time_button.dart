@@ -13,7 +13,7 @@ class TimeButton extends StatefulWidget {
   @override
   _TimeButtonState createState() => _TimeButtonState();
   final int buttonNumber;
-  Game game = Game(Duration(seconds: 15), 20, "Default game");
+  Game game = Game(Duration(minutes: 30), null, "Default game");
   TimeButton({Key key, this.buttonNumber}) : super(key: key);
 }
 

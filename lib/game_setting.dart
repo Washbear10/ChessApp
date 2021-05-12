@@ -11,7 +11,6 @@ class Game {
 
   Game(this.duration, this.maxMoves, this.name);
 
-
   bool operator ==(o) => o is Game && name == o.name && duration == o.duration && maxMoves == o.maxMoves;
   int get hashCode => hash3(name.hashCode, maxMoves.hashCode, duration.hashCode);
 

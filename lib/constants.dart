@@ -17,15 +17,21 @@ const AlertTitleStyle = TextStyle(
 
 const cardTitleStyle = TextStyle(
   fontSize: 20,
-  color: Colors.black,
+  color: Color.fromRGBO(230, 230, 230, 1),
 );
 
 const cardValuesStyle = TextStyle(
   fontSize: 25,
-  color: Colors.black,
+  color: Color.fromRGBO(230, 230, 230, 1),
 );
 
 const gameInputStyle = TextStyle(
   fontSize: 24,
   color: Colors.black,
+);
+
+
+const deleteCardStyle = TextStyle(
+  fontSize: 22,
+  color: Color.fromRGBO(219, 17, 17, 1.0),
 );
