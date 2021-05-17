@@ -1,3 +1,3 @@
 # flutter_app
 
-This is my first project, also with git. Pls dont laugh
+This is my first little project, also with git.
