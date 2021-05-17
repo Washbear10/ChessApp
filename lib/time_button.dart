@@ -83,7 +83,7 @@ class _TimeButtonState extends State<TimeButton> {
         });
         if (remainingDuration == Duration.zero){ // end of game, one player has no time left
           Vibration.vibrate(duration: 1000);
-          playSound();
+          playRing();
         }
       }
     });
@@ -127,6 +127,7 @@ class _TimeButtonState extends State<TimeButton> {
         onPressed: () {
           if(run) {
             run = false;
+            playClick();
             //if you are player 1, set the playing button to button 2 => it's their turn;
             // if you are player 2, set it to 1
             myModelInfo.setPlayingNumber(widget.buttonNumber == 1 ? 2 : 1);

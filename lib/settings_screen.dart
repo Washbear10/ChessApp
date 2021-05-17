@@ -29,8 +29,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 class MySafeAreaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var deletionModelInfo = context.watch<DeletionModel>();
-    var configurationModelInfo = context.watch<ConfigurationModel>();
+    // var deletionModelInfo = context.watch<DeletionModel>();
+    // var configurationModelInfo = context.watch<ConfigurationModel>();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black87,
@@ -215,9 +215,6 @@ class _GameCardState extends State<GameCard> {
               deletionModelInfo.activateDeleteMode();
               deletionModelInfo.addGameToDeletionList(widget.containedGame);
             }
-            // } else if (deletionModelInfo.deleteMode == true && deletionModelInfo.deletionList.isEmpty){ // I am in Deletion mode, and
-            //   deletionModelInfo.deActivateDeleteMode();
-            // }
           },
         ),
       ),

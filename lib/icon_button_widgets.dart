@@ -78,7 +78,8 @@ class _MyRestartButtonState extends State<MyRestartButton> {
         color: Colors.amber,
         onPressed: myModelInfo.hasStarted ? // same ternary logic as with StartButton, look it up
             (){
-                bool wasPaused = myModelInfo.button == 0; // remember if it was already paused before button clicked
+              Wakelock.disable(); // disable while not actively playing. enable again when playing
+              bool wasPaused = myModelInfo.button == 0; // remember if it was already paused before button clicked
                 myModelInfo.setPlayingNumber(0); //pause the game
                 showDialog(
                     context: context,
@@ -109,6 +110,7 @@ class _MyRestartButtonState extends State<MyRestartButton> {
                               onPressed: () {
                                 if (!wasPaused) myModelInfo.setPlayingNumber(mostRecentPlayer); // continue with last player if the game was not paused.
                                                                                                 //otherwise just leave it paused (=> myModelInfo.button = 0)
+                                Wakelock.enable(); //keep playing
                                 Navigator.pop(context);
                               }
                           )
@@ -150,9 +152,9 @@ class _MySettingsButtonState extends State<MySettingsButton> {
         onPressed: () async {
           myModelInfo.setPlayingNumber(0);
           //TODO enable again
-          // Wakelock.disable(); // enable again when popping back to play screen
+          Wakelock.disable(); // disable while in settings. enable again when popping back to play screen
           Game returnedGame = await Navigator.push(context, MaterialPageRoute(builder: (context) { return SettingsScreen(); } ));
-          // Wakelock.enable();
+          Wakelock.enable();
           if (returnedGame != null){
             print("nich null, game: ${returnedGame.name}");
             myModelInfo.restart();

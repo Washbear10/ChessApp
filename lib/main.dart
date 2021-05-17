@@ -7,9 +7,11 @@ import 'icon_button_widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/configuration_model.dart';
 import 'globals.dart' as global;
+import 'package:wakelock/wakelock.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   global.setGameListFromFile();
+  Wakelock.enable();
   runApp(MyApp());
 }
 
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ConfigurationModel(),
       child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Chess Timer',
           home: HomeScreen()
       ),
     );
